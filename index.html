@@ -3,509 +3,777 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Приём металлолома: актуальные цены, калькулятор, вывоз.">
-<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
+<meta name="description" content="Приём металлолома: актуальные цены, калькулятор, справочник.">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}</style>
 </head>
 <body>
 <title>Шаблон Металлоприём</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tektur:wght@400;600;800&family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Golos+Text:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: тёмная «хромовая» витрина как в референсе — узкая колонка, прайс первым экраном, фото в скруглённых рамках */
+/* Layout: чередование тёмных графитовых полос (шапка, герой, цифры, футер) и светлых блоков с контентом; один оранжевый акцент; крупный читаемый текст */
 :root{
-  --bg:#0b0c0e; --panel:#141519; --line:#26282e; --fg:#e9eaee; --muted:#8b8f99;
-  --chrome:linear-gradient(180deg,#ffffff 0%,#c9ccd3 45%,#7d828c 100%);
-  --copper:#d08a5c; --up:#7fcf9a; --down:#e48a7a;
-  --display:"Tektur","Arial Narrow",system-ui,sans-serif;
-  --body:"Golos Text",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
-  color-scheme:dark;
+  --ink:#17191c;      /* тёмные полосы */
+  --ink-2:#22252a;    /* карточки на тёмном */
+  --paper:#ffffff;    /* основной фон */
+  --mist:#f2f3f5;     /* светло-серые секции */
+  --text:#17191c;
+  --muted:#5b616a;
+  --muted-on-ink:#a7adb6;
+  --line:#e1e3e7;
+  --line-on-ink:#33373d;
+  --accent:#e2600f;   /* оранжевый */
+  --accent-hover:#c95409;
+  --up:#1a8a4a; --down:#c63b27;
+  --display:"Oswald","Arial Narrow","Roboto Condensed",sans-serif;
+  --body:"Golos Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:light;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.55;
-  background-image:radial-gradient(900px 500px at 50% -10%,#2a2d34 0%,transparent 70%)}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
-.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body{background:var(--paper);color:var(--text);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-text-size-adjust:100%}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--ink)}
+.wrap{max-width:1200px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 a{color:inherit}
-.stub{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#0b0c0e;background:#e9c46a;padding:2px 7px;border-radius:4px;white-space:nowrap}
-.banner{background:#1b1c20;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted)}
-.banner .wrap{display:flex;gap:10px;align-items:center;padding-block:8px;flex-wrap:wrap}
-
-header{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:rgba(11,12,14,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-header .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:14px}
-.logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;letter-spacing:.08em;text-decoration:none}
-.logo svg{width:26px;height:26px}
-nav{display:flex;gap:22px;font-size:13px;color:var(--muted)}
-nav a{text-decoration:none}nav a:hover,nav a:focus-visible{color:var(--fg)}
-.call{font-family:var(--mono);font-size:13px;border:1px solid var(--line);padding:8px 12px;border-radius:999px;text-decoration:none;white-space:nowrap}
-@media (max-width:820px){nav{display:none}}
-
-.hero{padding-block:64px 40px;display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
-.eyebrow{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;display:flex;gap:10px;align-items:center}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--up);box-shadow:0 0 12px var(--up)}
-h1{font-family:var(--display);font-weight:800;font-size:clamp(42px,8vw,92px);line-height:.95;margin:18px 0;letter-spacing:-.01em;
-  background:var(--chrome);-webkit-background-clip:text;background-clip:text;color:transparent;text-wrap:balance}
-.lead{color:var(--muted);max-width:46ch;font-size:16px}
-.btns{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap}
-.btn{font:600 14px var(--body);padding:12px 20px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--fg);text-decoration:none;cursor:pointer}
-.btn.primary{background:linear-gradient(180deg,#f4f5f7,#aeb2ba);color:#111;border-color:#d7dae0}
-.btn:focus-visible{outline:2px solid #fff;outline-offset:2px}
-.hero-img{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line);aspect-ratio:4/5;max-width:100%}
-.hero-img img{width:100%;height:100%;object-fit:cover;filter:grayscale(.2) contrast(1.05)}
-.hero-img::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(11,12,14,.85))}
-.hero-img .tag{position:absolute;left:16px;bottom:14px;z-index:1;font-family:var(--mono);font-size:12px;color:#ddd}
-.star{position:absolute;right:-30px;top:-30px;width:160px;height:160px;z-index:1;pointer-events:none;
-  background:radial-gradient(closest-side,rgba(255,255,255,.9),transparent 70%);clip-path:polygon(50% 0,55% 45%,100% 50%,55% 55%,50% 100%,45% 55%,0 50%,45% 45%)}
-@media (max-width:820px){.hero{grid-template-columns:1fr;padding-block:40px 24px}.hero-img{aspect-ratio:16/10}}
-
-.facts{display:grid;grid-template-columns:repeat(4,1fr);border-block:1px solid var(--line);font-size:13px;color:var(--muted)}
-.facts div{padding:16px 12px;border-right:1px solid var(--line)}.facts div:last-child{border:0}
-.facts b{display:block;font-family:var(--display);color:var(--fg);font-size:20px;font-weight:600}
-@media (max-width:640px){.facts{grid-template-columns:repeat(2,1fr)}.facts div:nth-child(2){border-right:0}.facts div:nth-child(-n+2){border-bottom:1px solid var(--line)}}
-
-section{padding-block:72px 0;scroll-margin-top:70px}
-.sec-head{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin-bottom:26px}
-h2{font-family:var(--display);font-weight:600;font-size:clamp(28px,4.5vw,44px);line-height:1.05;margin:0;text-wrap:balance}
-.sub{color:var(--muted);max-width:52ch;margin:8px 0 0}
-
-/* Прайс */
-.updated{font-family:var(--mono);font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:7px 12px;display:flex;gap:8px;align-items:center}
-.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-.tab{font:500 13px var(--body);padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
-.tab[aria-pressed="true"]{background:var(--fg);color:#111;border-color:var(--fg)}
-.tab:focus-visible{outline:2px solid #fff;outline-offset:2px}
-.price{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden}
-.tbl-scroll{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:14px;min-width:520px}
-th{font:500 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:left;padding:12px 18px;border-bottom:1px solid var(--line)}
-td{padding:14px 18px;border-bottom:1px solid var(--line);vertical-align:middle}
-tr:last-child td{border-bottom:0}
-td.p,th.p{text-align:right}
-td.p{font-family:var(--mono);font-size:17px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
-td.p small{font-size:11px;color:var(--muted);font-weight:400}
-.ch{font-family:var(--mono);font-size:12px;font-variant-numeric:tabular-nums}
-.ch.u{color:var(--up)}.ch.d{color:var(--down)}.ch.z{color:var(--muted)}
-.mat{display:flex;gap:12px;align-items:center}
-.sw{width:22px;height:22px;border-radius:6px;flex:none;border:1px solid rgba(255,255,255,.15)}
-.mat span{color:var(--muted);font-size:12px;display:block}
-.note{font-size:13px;color:var(--muted);padding:14px 18px;border-top:1px solid var(--line);display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;align-items:center}
-
-/* Как сдать */
-.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-.step{border-top:1px solid #4a4d55;padding-top:14px}
-.step b{font-family:var(--mono);color:var(--muted);font-size:12px}
-.step h3{font-family:var(--display);font-weight:600;font-size:18px;margin:8px 0 6px}
-.step p{margin:0;color:var(--muted);font-size:14px}
-@media (max-width:820px){.steps{grid-template-columns:repeat(2,1fr)}}
-@media (max-width:480px){.steps{grid-template-columns:1fr}}
-
-/* Услуги */
-.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
-.card img{aspect-ratio:4/3;object-fit:cover;width:100%;filter:grayscale(.15)}
-.card div{padding:18px;display:flex;flex-direction:column;gap:6px;flex:1}
-.card h3{font-family:var(--display);font-weight:600;font-size:20px;margin:0}
-.card p{margin:0;color:var(--muted);font-size:14px}
-.card .pr{margin-top:auto;padding-top:10px;font-family:var(--mono);font-size:13px}
-@media (max-width:820px){.cards{grid-template-columns:1fr}}
-
-/* О компании */
-.about{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:stretch}
-.about .ph{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.about .ph img{border-radius:14px;border:1px solid var(--line)}
-.about p{color:var(--muted)}
-.about ul{list-style:none;padding:0;margin:20px 0 0;display:grid;gap:10px}
-.about li{display:flex;gap:10px;font-size:14px}.about li::before{content:"✦";color:#c9ccd3}
-@media (max-width:820px){.about{grid-template-columns:1fr}}
-
-/* FAQ */
-details{border-bottom:1px solid var(--line);padding-block:16px}
-summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:16px}
-summary::after{content:"+";font-family:var(--mono);color:var(--muted)}
-details[open] summary::after{content:"–"}
-details p{color:var(--muted);margin:10px 0 0;max-width:65ch}
-
-/* Контакты */
-.contact{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px}
-.row{display:flex;justify-content:space-between;gap:16px;padding-block:12px;border-bottom:1px solid var(--line);font-size:14px}
-.row:last-child{border:0}.row span:first-child{color:var(--muted)}
-.row span:last-child{text-align:right}
-.map{border-radius:12px;min-height:220px;height:100%;background:repeating-linear-gradient(45deg,#16171b 0 12px,#1a1b20 12px 24px);display:grid;place-items:center;color:var(--muted);font-family:var(--mono);font-size:12px;border:1px dashed #3a3d44;text-align:center;padding:16px}
-form{display:grid;gap:10px;margin-top:14px}
-label{font-size:12px;color:var(--muted);display:grid;gap:6px}
-input,select{font:15px var(--body);padding:12px;border-radius:10px;border:1px solid var(--line);background:#0e0f12;color:var(--fg)}
-input:focus-visible,select:focus-visible{outline:2px solid #c9ccd3;outline-offset:1px}
-.ok{font-size:13px;color:var(--up)}
-@media (max-width:820px){.contact{grid-template-columns:1fr}}
-
-.enter{margin-top:72px;border-radius:18px;padding:28px;background:url(img/steel.jpg) center/cover;color:#111;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
-.enter h3{font-family:var(--display);font-weight:800;font-size:clamp(24px,4vw,38px);margin:0}
-.enter .btn{background:#111;color:#fff;border-color:#111}
-footer{padding-block:40px;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+img{display:block;max-width:100%}
+[hidden]{display:none!important}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
-.page{animation:fade .25s ease}
-@keyframes fade{from{opacity:.4}to{opacity:1}}
-nav a[aria-current="page"]{color:var(--fg)}
-[hidden]{display:none!important}
-.calc>*,.about>*,.contact>*,.grid2>*{min-width:0}
-.line label,.line select,.line input{min-width:0;width:100%}
-.about .ph{align-self:start}
-.about .ph img{width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;display:block}
-.crumbs{font-family:var(--mono);font-size:12px;color:var(--muted);padding-top:40px}
-.crumbs a{text-decoration:none}
-.more{display:inline-flex;margin-top:16px}
-.calc{display:grid;grid-template-columns:1.2fr 1fr;gap:14px}
-.lines{display:grid;gap:10px}
-.line{display:grid;grid-template-columns:1fr 130px 40px;gap:10px;align-items:end}
-.line button{height:46px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer;font-size:18px}
-.total{display:flex;flex-direction:column;justify-content:space-between;gap:16px}
-.total .sum{font-family:var(--display);font-weight:800;font-size:clamp(40px,7vw,64px);line-height:1;background:var(--chrome);-webkit-background-clip:text;background-clip:text;color:transparent;font-variant-numeric:tabular-nums}
-.total ul{list-style:none;padding:0;margin:0;font-size:13px;color:var(--muted);display:grid;gap:6px}
-.total li{display:flex;justify-content:space-between;gap:10px;font-family:var(--mono)}
-@media (max-width:820px){.calc{grid-template-columns:1fr}}
-.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-.tip h3{font-family:var(--display);font-weight:600;font-size:19px;margin:0 0 8px;display:flex;gap:10px;align-items:center}
-.tip p,.tip li{color:var(--muted);font-size:14px;margin:0}
-.tip ul{padding-left:18px;margin:8px 0 0;display:grid;gap:4px}
-.tip .k{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:3px 7px}
-@media (max-width:640px){.grid2{grid-template-columns:1fr}}
-.test{width:100%;border-collapse:collapse;font-size:14px;min-width:560px}
-.no{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.no div{border:1px solid #4a2c2a;background:#1a1314;border-radius:12px;padding:16px;font-size:14px}
-.no b{display:block;color:var(--down);font-weight:600;margin-bottom:4px}
-.no span{color:var(--muted);font-size:13px}
-@media (max-width:820px){.no{grid-template-columns:1fr 1fr}}@media (max-width:480px){.no{grid-template-columns:1fr}}
-.ba{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:14px}
-.ba div{border-radius:12px;padding:14px;border:1px solid var(--line)}
-.ba .bad{background:#1a1314;border-color:#4a2c2a}.ba .good{background:#121a15;border-color:#2a4a34}
-.ba b{display:block;font-size:12px;font-family:var(--mono);margin-bottom:4px}
-.ba .bad b{color:var(--down)}.ba .good b{color:var(--up)}
-.photos{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.photos div{aspect-ratio:4/3;border-radius:12px;border:1px dashed #3a3d44;display:grid;place-items:center;color:var(--muted);font-family:var(--mono);font-size:12px;background:repeating-linear-gradient(45deg,#16171b 0 12px,#1a1b20 12px 24px);text-align:center;padding:10px}
-@media (max-width:640px){.photos{gap:8px}.photos div{font-size:10px}}
-/* Одна строка в шапке + мобильная версия */
-nav{white-space:nowrap;gap:18px}
-.burger{display:none;width:42px;height:42px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--fg);font-size:20px;cursor:pointer;flex:none}
-.burger:focus-visible{outline:2px solid #fff;outline-offset:2px}
-.mnav{position:absolute;left:0;right:0;top:100%;display:flex;flex-direction:column;align-items:stretch;text-align:left;gap:2px;overflow:visible;background:var(--bg);border-bottom:1px solid var(--line);padding-block:6px 14px}
-.mnav a{display:block;text-align:left;text-decoration:none;border:0;border-radius:10px;padding:13px 12px;font-size:16px;color:var(--fg)}
-.mnav a[aria-current="page"]{background:var(--panel);color:var(--fg)}
-.mnav .mcall{margin-top:8px;font-family:var(--mono);border:1px solid var(--line)}
-@media (max-width:1100px){.call{display:none}}
-@media (max-width:960px){nav{display:none}.burger{display:block}}
-@media (min-width:961px){.mnav{display:none!important}}
-@media (max-width:640px){th{white-space:nowrap}.tbl-scroll table th.p{font-size:10px}}
-@media (max-width:640px){
-  body{font-size:15px}
-  .banner{font-size:12px}
-  .hero{padding-block:28px 20px;gap:22px}
-  h1{font-size:44px}
-  .lead{font-size:15px}
-  .btns .btn{flex:1;text-align:center}
-  .hero-img{aspect-ratio:4/3}
-  .star{width:110px;height:110px;right:-20px;top:-20px}
-  section{padding-block:44px 0}
-  .crumbs{padding-top:24px}
-  h2{font-size:28px}
-  .facts b{font-size:18px}
-  table{min-width:0}
-  .desc{display:none}
-  .test{min-width:0}
-  table:not(.test){min-width:0;table-layout:fixed}
-  table:not(.test) th:first-child{width:auto}
-  table:not(.test) th.p{width:84px}
-  table:not(.test) th.p:last-child{width:64px}
-  td.p .ch{font-size:11px}
-  td,th{padding:12px 12px}
-  td.p{font-size:15px}
-  .test thead{display:none}
-  .test,.test tbody,.test tr,.test td{display:block}
-  .test tr{padding:14px;border-bottom:1px solid var(--line)}
-  .test td{border:0;padding:2px 0;color:var(--muted);font-size:14px}
-  .test td:first-child{color:var(--fg);font-family:var(--display);font-size:18px;font-weight:600;margin-bottom:4px}
-  .test td:nth-child(2)::before{content:"Магнит: "}
-  .line{grid-template-columns:1fr 92px 40px}
-  .box{padding:16px}
-  .row{flex-direction:column;gap:2px}.row span:last-child{text-align:left}
-  .ba{grid-template-columns:1fr}
-  .enter{margin-top:44px;padding:22px}
-  .enter .btn{width:100%;text-align:center}
-  input,select{font-size:16px}
+/* мелочи */
+.stub{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#9a3d06;background:#fff0e5;border:1px solid #ffd5b8;padding:1px 7px;border-radius:4px;white-space:nowrap;vertical-align:middle;line-height:1.6}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.eyebrow.on-ink{color:var(--muted-on-ink)}
+.rule{width:48px;height:3px;background:var(--accent);margin:20px 0}
+h1,h2,h3{font-family:var(--display);text-transform:uppercase;letter-spacing:.01em;line-height:1.05;margin:0;text-wrap:balance}
+h2{font-size:clamp(30px,4vw,44px);font-weight:600}
+h3{font-size:22px;font-weight:600}
+.lead{font-size:18px;color:var(--muted);max-width:56ch;margin:12px 0 0}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 24px;border-radius:8px;font:600 16px var(--body);text-decoration:none;cursor:pointer;border:1.5px solid transparent;transition:background .15s,border-color .15s}
+.btn-accent{background:var(--accent);color:#fff}
+.btn-accent:hover{background:var(--accent-hover)}
+.btn-ghost{background:transparent;color:#fff;border-color:#5a5f67}
+.btn-ghost:hover{border-color:#fff}
+.btn-line{background:var(--paper);color:var(--text);border-color:var(--line)}
+.btn-line:hover{border-color:var(--text)}
+.arrow{width:18px;height:18px;flex:none}
+
+/* демо-полоса */
+.demo{background:#0f1012;color:var(--muted-on-ink);font-size:13px}
+.demo .wrap{display:flex;gap:10px;align-items:center;padding-block:7px}
+
+/* шапка */
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--ink);color:#fff;border-bottom:1px solid var(--line-on-ink)}
+.hbar{display:flex;align-items:center;gap:24px;min-height:72px}
+.logo{display:flex;flex-direction:column;text-decoration:none;line-height:1;flex:none}
+.logo b{font-family:var(--display);font-size:26px;font-weight:700;letter-spacing:.04em}
+.logo span{font-size:12px;color:var(--muted-on-ink);margin-top:4px}
+nav.main{display:flex;gap:4px;margin-left:auto}
+nav.main a{font-size:15px;text-decoration:none;color:#d7dbe0;padding:8px 10px;border-radius:6px;white-space:nowrap}
+nav.main a:hover{color:#fff}
+nav.main a[aria-current="page"]{color:#fff;box-shadow:inset 0 -2px 0 var(--accent);border-radius:0}
+.hphone{display:flex;flex-direction:column;line-height:1.2;text-align:right;flex:none}
+.hphone b{font-size:17px;font-weight:600;white-space:nowrap}
+.hphone span{font-size:12px;color:var(--muted-on-ink)}
+.burger{display:none;margin-left:auto;width:48px;height:48px;border-radius:8px;border:1.5px solid var(--line-on-ink);background:transparent;color:#fff;cursor:pointer;align-items:center;justify-content:center}
+.burger svg{width:22px;height:22px}
+.mmenu{border-top:1px solid var(--line-on-ink);padding-block:8px 18px}
+.mmenu a{display:block;padding:14px 4px;font-size:18px;text-decoration:none;color:#fff;border-bottom:1px solid var(--line-on-ink)}
+.mmenu a[aria-current="page"]{color:var(--accent)}
+.mmenu .mphone{display:block;margin-top:16px;font-size:20px;font-weight:600}
+.mmenu .mphone span{display:block;font-size:13px;font-weight:400;color:var(--muted-on-ink)}
+@media (max-width:1180px){.hphone{display:none}}
+@media (max-width:1000px){nav.main{display:none}.burger{display:inline-flex}}
+@media (min-width:1001px){.mmenu{display:none!important}}
+
+/* герой */
+.hero{position:relative;background:var(--ink);color:#fff;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background:url(img/pile.jpg) center 40%/cover no-repeat}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(23,25,28,.97) 0%,rgba(23,25,28,.88) 45%,rgba(23,25,28,.55) 100%)}
+.hero .wrap{position:relative;z-index:1;padding-block:72px 128px}
+.hero h1{font-size:clamp(44px,7vw,84px);font-weight:700;margin-top:14px;max-width:12ch}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero p{font-size:19px;color:#d7dbe0;max-width:46ch;margin:20px 0 0}
+.hero .btns{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px}
+
+/* быстрый расчёт (как поиск в референсе) */
+.quick{position:relative;z-index:2;margin-top:-72px}
+.qbox{background:var(--paper);border-radius:12px;box-shadow:0 18px 40px rgba(16,18,22,.18);padding:24px;display:grid;grid-template-columns:1.4fr .8fr 1fr;gap:16px;align-items:end}
+.qbox .qres{display:flex;flex-direction:column;justify-content:flex-end;min-height:52px}
+.qres small{font-size:13px;color:var(--muted)}
+.qres b{font-family:var(--display);font-size:32px;font-weight:600;line-height:1.1;font-variant-numeric:tabular-nums}
+.qhint{grid-column:1/-1;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:14px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+.qhint a{color:var(--accent);font-weight:600;text-decoration:none}
+
+/* формы */
+label{display:grid;gap:6px;font-size:14px;font-weight:500;color:var(--muted);min-width:0}
+input,select{width:100%;min-width:0;height:52px;padding:0 14px;font:16px var(--body);color:var(--text);background:var(--paper);border:1.5px solid var(--line);border-radius:8px}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%235b616a' stroke-width='1.8'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:38px;text-overflow:ellipsis}
+input:focus,select:focus{border-color:var(--text);outline:none}
+
+/* секции */
+section{padding-block:80px}
+section.mist{background:var(--mist)}
+.shead{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin-bottom:32px}
+.shead a.link{font-weight:600;text-decoration:none;display:inline-flex;gap:8px;align-items:center}
+.shead a.link:hover{color:var(--accent)}
+
+/* категории */
+.cats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.cat{position:relative;display:flex;flex-direction:column;justify-content:space-between;min-height:260px;padding:26px;border-radius:12px;overflow:hidden;color:#fff;text-decoration:none;background:var(--ink)}
+.cat img{position:absolute;right:0;top:0;width:62%;height:100%;object-fit:cover}
+.cat::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--ink) 38%,rgba(23,25,28,.35) 100%);z-index:1}
+.cat>*:not(img){position:relative;z-index:2}
+.cat h3{font-size:26px;max-width:9ch}
+.cat p{margin:10px 0 0;font-size:15px;color:#c9ced5;max-width:20ch}
+.cat .go{width:44px;height:44px;border-radius:50%;border:1.5px solid #6a7079;display:grid;place-items:center;transition:background .15s,border-color .15s}
+.cat:hover .go{background:var(--accent);border-color:var(--accent)}
+
+/* цифры */
+.stats{background:var(--ink);color:#fff}
+.stats .wrap{display:grid;grid-template-columns:repeat(4,1fr)}
+.stat{display:flex;gap:16px;align-items:center;padding:30px 20px;border-left:1px solid var(--line-on-ink)}
+.stat:first-child{border-left:0;padding-left:0}
+.stat svg{width:38px;height:38px;flex:none;color:#fff}
+.stat b{display:block;font-family:var(--display);font-size:26px;font-weight:600;line-height:1.1}
+.stat span{font-size:14px;color:var(--muted-on-ink)}
+
+/* таблица цен */
+.tablebox{background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.tscroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:left;padding:14px 20px;background:var(--mist);border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:16px 20px;border-bottom:1px solid var(--line);vertical-align:middle;font-size:16px}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:#fafafb}
+th.num,td.num{text-align:right}
+td.price{font-weight:700;font-size:19px;font-variant-numeric:tabular-nums;white-space:nowrap}
+td.price small{font-size:13px;font-weight:500;color:var(--muted)}
+.mat{display:flex;gap:12px;align-items:center;font-weight:500}
+.sw{width:14px;height:14px;border-radius:3px;flex:none}
+td.desc{color:var(--muted);font-size:15px}
+.chg{font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.chg.u{color:var(--up)}.chg.d{color:var(--down)}.chg.z{color:var(--muted);font-weight:400}
+.tfoot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;padding:14px 20px;border-top:1px solid var(--line);font-size:14px;color:var(--muted);background:var(--mist)}
+.upd{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--muted);background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:8px 14px}
+.upd i{width:8px;height:8px;border-radius:50%;background:var(--up)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.filter{min-height:44px;padding:0 18px;border-radius:999px;border:1.5px solid var(--line);background:var(--paper);font:500 15px var(--body);color:var(--text);cursor:pointer}
+.filter[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+
+/* шаги (раздел в стиле «Одна отрасль» из референса) */
+.split{display:grid;grid-template-columns:.9fr 1.6fr;background:var(--paper)}
+.split-text{padding:80px 48px 80px max(16px,calc((100vw - 1200px)/2 + 16px))}
+.split-text p{font-size:17px;color:var(--muted);max-width:34ch;margin:0}
+.split-dark{position:relative;background:var(--ink);color:#fff;display:flex;align-items:flex-end;min-height:440px;overflow:hidden}
+.split-dark::before{content:"";position:absolute;inset:0;background:url(img/motors.jpg) center 30%/cover}
+.split-dark::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(23,25,28,.45) 0%,rgba(23,25,28,.92) 62%)}
+.steps{position:relative;z-index:1;display:grid;grid-template-columns:repeat(4,1fr);width:100%;padding:0 32px 40px}
+.step{padding:0 20px;border-left:1px solid var(--line-on-ink)}
+.step:first-child{border-left:0;padding-left:0}
+.step .n{font-family:var(--display);font-size:15px;color:var(--accent);font-weight:600;letter-spacing:.08em}
+.step h3{font-size:19px;margin:8px 0 10px}
+.step p{margin:0;font-size:15px;color:#c9ced5}
+
+/* баннер */
+.cta{position:relative;background:var(--ink);color:#fff;overflow:hidden}
+.cta::before{content:"";position:absolute;inset:0;background:url(img/grab.jpg) center 35%/cover}
+.cta::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(23,25,28,.96) 30%,rgba(23,25,28,.5))}
+.cta .wrap{position:relative;z-index:1;padding-block:72px}
+.cta h2{font-size:clamp(32px,5vw,52px);font-weight:700;max-width:14ch}
+.cta p{font-size:18px;color:#d7dbe0;margin:16px 0 28px;max-width:44ch}
+
+/* внутренние страницы */
+.phead{background:var(--mist);border-bottom:1px solid var(--line)}
+.phead .wrap{padding-block:44px 40px}
+.crumbs{font-size:14px;color:var(--muted);margin-bottom:14px}
+.crumbs a{text-decoration:none}.crumbs a:hover{color:var(--accent)}
+.phead h1{font-size:clamp(36px,5.5vw,60px);font-weight:700}
+.phead p{font-size:18px;color:var(--muted);max-width:60ch;margin:14px 0 0}
+.page section{padding-block:56px}
+.page section+section{padding-top:0}
+.after{margin-top:20px;display:flex;gap:12px;flex-wrap:wrap}
+
+/* калькулятор */
+.calc{display:grid;grid-template-columns:1.5fr 1fr;gap:20px;align-items:start}
+.box{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:28px;min-width:0}
+.lines{display:grid;gap:16px}
+.line{display:grid;grid-template-columns:minmax(0,1fr) 120px 52px;gap:12px;align-items:end}
+.line .del{width:52px;height:52px;border-radius:8px;border:1.5px solid var(--line);background:var(--paper);color:var(--muted);font-size:22px;cursor:pointer}
+.line .del:hover{border-color:var(--down);color:var(--down)}
+.total{background:var(--ink);color:#fff;border-color:var(--ink);position:sticky;top:96px}
+.total .sum{font-family:var(--display);font-size:clamp(40px,6vw,56px);font-weight:600;line-height:1;margin:10px 0 20px;font-variant-numeric:tabular-nums}
+.total ul{list-style:none;padding:0;margin:0 0 20px;display:grid;gap:10px;font-size:15px;color:#d7dbe0;border-top:1px solid var(--line-on-ink);padding-top:16px}
+.total li{display:flex;justify-content:space-between;gap:12px}
+.total li span:last-child{font-variant-numeric:tabular-nums;white-space:nowrap}
+.total p{font-size:14px;color:var(--muted-on-ink);margin:0}
+
+/* справочник */
+.idtable td:first-child{font-weight:600}
+.mag{display:inline-block;font-size:13px;font-weight:600;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.mag.m-no{background:#e8f5ec;color:#156b3a}.mag.m-yes{background:#fde9e5;color:#a32f1e}.mag.m-weak{background:#fdf3dd;color:#855a06}
+.tips{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.tip{border-top:3px solid var(--ink);background:var(--mist);padding:24px;border-radius:0 0 10px 10px}
+.tip h3{font-size:20px;margin-bottom:8px}
+.tip p{margin:0;color:var(--muted)}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.compare div{padding:20px 24px;border-radius:10px;border:1.5px solid}
+.compare .bad{border-color:#f2c4bb;background:#fdf4f2}.compare .good{border-color:#b9e0c8;background:#f1faf4}
+.compare b{display:block;font-size:13px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+.compare .bad b{color:var(--down)}.compare .good b{color:var(--up)}
+
+/* правила */
+.nolist{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.no{display:flex;gap:16px;padding:22px;border:1px solid var(--line);border-radius:10px;background:var(--paper)}
+.no svg{width:28px;height:28px;flex:none;color:var(--down)}
+.no b{display:block;font-size:17px;margin-bottom:4px}
+.no span{font-size:15px;color:var(--muted)}
+.faq{border-top:1px solid var(--line);max-width:860px}
+details{border-bottom:1px solid var(--line)}
+summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:20px;padding:20px 0;font-size:18px;font-weight:600}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-size:26px;line-height:1;color:var(--accent);flex:none}
+details[open] summary::after{content:"−"}
+details p{margin:0 0 20px;color:var(--muted);max-width:68ch;font-size:16px}
+
+/* услуги */
+.svc{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;background:var(--paper)}
+.card img{width:100%;aspect-ratio:4/3;object-fit:cover}
+.card div{padding:24px;display:flex;flex-direction:column;gap:10px;flex:1}
+.card p{margin:0;color:var(--muted)}
+.card .pr{margin-top:auto;padding-top:12px;border-top:1px solid var(--line);font-weight:700;font-size:17px}
+
+/* о компании */
+.about{display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:start}
+.about p{font-size:17px;color:var(--muted);margin:0 0 16px}
+.checks{list-style:none;padding:0;margin:24px 0 0;display:grid;gap:12px}
+.checks li{display:flex;gap:12px;align-items:flex-start;font-size:16px}
+.checks li::before{content:"";width:20px;height:20px;flex:none;margin-top:2px;border-radius:50%;background:var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='10' fill='none'%3E%3Cpath d='M1 5l3.5 3.5L11 1.5' stroke='white' stroke-width='2'/%3E%3C/svg%3E") center no-repeat}
+.aph{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.aph img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:10px}
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.slots div{aspect-ratio:4/3;border:2px dashed #c9cdd3;border-radius:10px;display:grid;place-items:center;text-align:center;color:var(--muted);font-size:15px;background:var(--mist);padding:12px}
+
+/* контакты */
+.contact{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:stretch}
+.crow{display:grid;grid-template-columns:150px minmax(0,1fr);gap:16px;padding:16px 0;border-bottom:1px solid var(--line);font-size:16px}
+.crow:first-child{padding-top:0}
+.crow span{color:var(--muted)}
+.crow b{font-weight:600}
+form{display:grid;gap:14px;margin-top:24px}
+.ok{font-size:15px;color:var(--up);font-weight:500}
+.map{border-radius:12px;min-height:320px;background:var(--mist);border:2px dashed #c9cdd3;display:grid;place-items:center;text-align:center;color:var(--muted);padding:20px}
+
+/* футер */
+footer{background:var(--ink);color:#fff}
+.fgrid{display:grid;grid-template-columns:1.2fr 2fr 1.2fr;gap:32px;padding-block:48px 32px;align-items:start}
+.fnav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 24px}
+.fnav a{text-decoration:none;color:#d7dbe0;font-size:15px}
+.fnav a:hover{color:#fff}
+.fcontact{font-size:15px;color:#d7dbe0;display:grid;gap:4px}
+.fcontact b{font-size:20px;color:#fff}
+.fbottom{border-top:1px solid var(--line-on-ink);padding-block:18px;font-size:13px;color:var(--muted-on-ink);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+/* ===== планшет ===== */
+@media (max-width:1000px){
+  .qbox{grid-template-columns:1fr 1fr}
+  .qbox .qres{grid-column:1/-1}
+  .cat h3{font-size:22px}
+  .cat{padding:20px}
+  .stats .wrap{grid-template-columns:1fr 1fr}
+  .stat:nth-child(3){border-left:0;padding-left:0}
+  .stat:nth-child(-n+2){border-bottom:1px solid var(--line-on-ink)}
+  .split{grid-template-columns:1fr}
+  .split-text{padding:64px max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px))}
+  .steps{grid-template-columns:1fr 1fr;gap:28px 0;padding:120px 24px 32px}
+  .step:nth-child(3){border-left:0;padding-left:0}
+  .calc{grid-template-columns:1fr}
+  .total{position:static}
+  .nolist{grid-template-columns:1fr 1fr}
+  .about{grid-template-columns:1fr;gap:32px}
+  .contact{grid-template-columns:1fr}
+  .fgrid{grid-template-columns:1fr 1fr}
+  .fgrid>div:first-child{grid-column:1/-1}
 }
-header .mnav{align-items:stretch;justify-content:flex-start;gap:2px}
+
+/* ===== телефон ===== */
+@media (max-width:700px){.cats,.svc{grid-template-columns:1fr}}
+@media (max-width:640px){
+  body{font-size:16px}
+  .demo{font-size:12px}
+  .hbar{min-height:64px}
+  .logo b{font-size:22px}
+  .hero .wrap{padding-block:44px 104px}
+  .hero h1{font-size:44px}
+  .hero p{font-size:17px}
+  .hero .btns .btn{flex:1 1 100%}
+  .quick{margin-top:-64px}
+  .qbox{grid-template-columns:1fr;padding:20px;gap:14px}
+  .qres b{font-size:30px}
+  section{padding-block:56px}
+  h2{font-size:30px}
+  .lead{font-size:16px}
+  .cats,.svc{grid-template-columns:1fr}
+  .cat{min-height:200px;padding:22px}
+  .stats .wrap{grid-template-columns:1fr}
+  .stat{border-left:0!important;padding:18px 0!important;border-bottom:1px solid var(--line-on-ink)}
+  .stat:last-child{border-bottom:0}
+  .split-text{padding-block:56px 32px}
+  .split-dark{min-height:0}
+  .steps{grid-template-columns:1fr;gap:0;padding:160px 20px 12px}
+  .step{border-left:0!important;padding:18px 0!important;border-top:1px solid var(--line-on-ink)}
+  .cta .wrap{padding-block:56px}
+  .cta .btn{width:100%}
+  .phead .wrap{padding-block:32px 28px}
+  .phead h1{font-size:36px}
+  .phead p{font-size:16px}
+  .page section{padding-block:36px}
+  /* цены: прячем описание, таблица в ширину экрана */
+  .desc{display:none}
+  table.prices{table-layout:fixed}
+  table.prices th:first-child{width:auto}
+  table.prices th.c-price{width:92px}
+  table.prices th.c-chg{width:66px}
+  table.prices th,table.prices td{padding:13px 10px}
+  table.prices th:first-child,table.prices td:first-child{padding-left:14px}
+  table.prices th:last-child,table.prices td:last-child{padding-right:14px}
+  table.prices th{font-size:11px;letter-spacing:.04em}
+  td.price{font-size:17px}
+  .mat{gap:10px;font-size:15px}
+  .chg{font-size:13px}
+  .tfoot{padding:14px}
+  /* справочник: таблица превращается в карточки */
+  .idtable thead{display:none}
+  .idtable,.idtable tbody,.idtable tr,.idtable td{display:block}
+  .idtable tr{padding:18px 16px;border-bottom:1px solid var(--line)}
+  .idtable tbody tr:last-child{border-bottom:0}
+  .idtable td{padding:3px 0;border:0;font-size:15px;color:var(--muted)}
+  .idtable td:first-child{font-family:var(--display);text-transform:uppercase;font-size:20px;color:var(--text);margin-bottom:6px}
+  .idtable td[data-l]::before{content:attr(data-l) ": ";color:var(--text);font-weight:600}
+  .idtable tbody tr:hover td{background:none}
+  .tips,.compare,.nolist{grid-template-columns:1fr}
+  .box{padding:20px}
+  .line{grid-template-columns:minmax(0,1fr) 52px;gap:10px}
+  .line label:first-child{grid-column:1/-1}
+  .line{padding-bottom:16px;border-bottom:1px solid var(--line)}
+  .crow{grid-template-columns:1fr;gap:2px}
+  .slots{gap:8px}
+  .slots div{font-size:12px;padding:6px}
+  .map{min-height:220px}
+  .fgrid{grid-template-columns:1fr}
+}
 </style>
 
-<div class="banner"><div class="wrap"><span class="stub">Шаблон</span> Это демо-версия сайта. Все цены, адреса и телефоны выдуманы и будут заменены реальными.</div></div>
+<div class="demo"><div class="wrap"><span class="stub">Шаблон</span><span>Демо-версия. Цены, адреса и телефоны выдуманы.</span></div></div>
 
-<header><div class="wrap">
-  <a class="logo" href="#home"><svg viewBox="0 0 24 24" fill="none"><path d="M12 1l2 9 9 2-9 2-2 9-2-9-9-2 9-2z" fill="#e9eaee"/></svg>ШАБЛОН</a>
-  <nav id="nav"><a href="#prices">Цены</a><a href="#calc">Калькулятор</a><a href="#guide">Как определить металл</a><a href="#rules">Правила приёма</a><a href="#services">Услуги</a><a href="#about">О компании</a><a href="#contacts">Контакты</a></nav>
-  <a class="call" href="tel:+70000000000">+7 (000) 000-00-00</a>
-  <button class="burger" id="burger" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="mnav">☰</button>
-</div>
-<div class="wrap mnav" id="mnav" hidden><a href="#home">Главная</a><a href="#prices">Цены</a><a href="#calc">Калькулятор</a><a href="#guide">Как определить</a><a href="#rules">Правила</a><a href="#services">Услуги</a><a href="#about">О нас</a><a href="#contacts">Контакты</a><span class="mcall" style="padding:13px 12px;border-radius:10px">+7 (000) 000-00-00</span></div>
+<header>
+  <div class="wrap hbar">
+    <a class="logo" href="#home"><b>ШАБЛОН</b><span>приём металлолома</span></a>
+    <nav class="main" id="nav" aria-label="Разделы сайта">
+      <a href="#prices">Цены</a><a href="#calc">Калькулятор</a><a href="#guide">Справочник</a><a href="#rules">Правила</a><a href="#services">Услуги</a><a href="#about">О компании</a><a href="#contacts">Контакты</a>
+    </nav>
+    <div class="hphone"><b>+7 (000) 000-00-00</b><span>Пн–Сб 8:00–19:00</span></div>
+    <button class="burger" id="burger" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="mmenu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path id="bicon" d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+  <div class="wrap mmenu" id="mmenu" hidden>
+    <a href="#home">Главная</a><a href="#prices">Цены</a><a href="#calc">Калькулятор</a><a href="#guide">Справочник</a><a href="#rules">Правила приёма</a><a href="#services">Услуги</a><a href="#about">О компании</a><a href="#contacts">Контакты</a>
+    <div class="mphone">+7 (000) 000-00-00<span>Пн–Сб 8:00–19:00</span></div>
+  </div>
 </header>
 
-<main class="wrap">
+<main>
 
-<!-- ГЛАВНАЯ -->
+<!-- ============ ГЛАВНАЯ ============ -->
 <div class="page" data-page="home">
   <div class="hero">
-    <div>
-      <div class="eyebrow"><span class="dot"></span>Принимаем сегодня до 19:00</div>
-      <h1>Приём металла «Шаблон»</h1>
-      <p class="lead">Цветной и чёрный лом. Честный вес на электронных весах, расчёт сразу, вывоз от 300 кг. Актуальные цены прямо на сайте, без звонков.</p>
-      <div class="btns"><a class="btn primary" href="#prices">Смотреть цены</a><a class="btn" href="#calc">Посчитать сумму</a></div>
+    <div class="wrap">
+      <div class="eyebrow on-ink">Пункт приёма металлолома</div>
+      <h1>Сдайте металл <em>по честной</em> цене</h1>
+      <p>Цветной и чёрный лом. Взвешиваем при вас, платим сразу. Цены обновляем каждый день.</p>
+      <div class="btns">
+        <a class="btn btn-accent" href="#prices">Смотреть цены <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a class="btn btn-ghost" href="#contacts">Как нас найти</a>
+      </div>
     </div>
-    <div class="hero-img"><span class="star"></span><img src="img/grab.jpg" alt="Грейфер загружает металлолом в контейнер"><span class="tag">Площадка №1 · ул. Шаблонная, 1</span></div>
   </div>
-  <div class="facts">
-    <div><b>12 лет</b>на рынке</div><div><b>±0,1 кг</b>точность весов</div><div><b>15 мин</b>средний приём</div><div><b>от 300 кг</b>бесплатный вывоз</div>
+
+  <div class="wrap quick">
+    <div class="qbox">
+      <label for="qm">Что сдаёте<select id="qm"></select></label>
+      <label for="qk">Вес, кг<input id="qk" type="number" inputmode="decimal" min="0" step="0.1" value="10"></label>
+      <div class="qres" aria-live="polite"><small>Примерно получите</small><b id="qsum">0 ₽</b></div>
+      <div class="qhint"><span>Цена за чистый металл, без учёта засора.</span><a href="#calc">Посчитать несколько металлов →</a></div>
+    </div>
   </div>
-  <section>
-    <div class="sec-head"><div><h2>Популярные цены</h2><p class="sub">Цена за 1 кг чистого металла.</p></div><div class="updated"><span class="dot"></span>Обновлено: <span class="upd">сегодня</span></div></div>
-    <div class="price"><div class="tbl-scroll"><table><thead><tr><th>Металл</th><th class="p">Цена, ₽/кг</th><th class="p">Неделя</th></tr></thead><tbody id="top"></tbody></table></div></div>
-    <a class="btn more" href="#prices">Весь прайс →</a>
-  </section>
-  <section>
-    <div class="sec-head"><div><h2>Как сдать металл</h2><p class="sub">Обычно занимает 15 минут.</p></div></div>
-    <div class="steps">
-      <div class="step"><b>Шаг 1</b><h3>Сверьте цены</h3><p>Посмотрите прайс и посчитайте сумму в калькуляторе.</p></div>
-      <div class="step"><b>Шаг 2</b><h3>Подготовьте металл</h3><p>Рассортируйте и очистите — так получите больше.</p></div>
-      <div class="step"><b>Шаг 3</b><h3>Взвешивание</h3><p>Сортируем и взвешиваем при вас.</p></div>
-      <div class="step"><b>Шаг 4</b><h3>Оплата</h3><p>Наличными или на карту сразу. Нужен паспорт.</p></div>
-    </div>
-  </section>
-  <section>
-    <div class="grid2">
-      <a class="box tip" href="#guide" style="text-decoration:none"><h3>Медь или латунь?</h3><p>Как отличить металлы дома, магнитом и на глаз.</p></a>
-      <a class="box tip" href="#rules" style="text-decoration:none"><h3>Что мы не принимаем</h3><p>Список до поездки, чтобы не везти зря.</p></a>
-    </div>
-  </section>
-</div>
 
-<!-- ЦЕНЫ -->
-<div class="page" data-page="prices" hidden>
-  <div class="crumbs"><a href="#home">Главная</a> / Цены</div>
-  <section style="padding-top:20px">
-    <div class="sec-head">
-      <div><h2>Цены на металлолом</h2><p class="sub">Цена за 1 кг. Итоговая цена зависит от засора и объёма, уточняйте у приёмщика.</p></div>
-      <div class="updated"><span class="dot"></span>Обновлено: <span class="upd">сегодня</span></div>
-    </div>
-    <div class="tabs" role="group" aria-label="Фильтр металлов">
-      <button class="tab" aria-pressed="true" data-f="all">Все</button>
-      <button class="tab" aria-pressed="false" data-f="color">Цветной</button>
-      <button class="tab" aria-pressed="false" data-f="black">Чёрный</button>
-      <button class="tab" aria-pressed="false" data-f="other">Другое</button>
-    </div>
-    <div class="price">
-      <div class="tbl-scroll"><table>
-        <thead><tr><th>Металл</th><th class="desc">Описание</th><th class="p">Цена, ₽/кг</th><th class="p">Неделя</th></tr></thead>
-        <tbody id="rows"></tbody>
-      </table></div>
-      <div class="note"><span>Не знаете, какой у вас металл? Загляните на страницу «Как определить металл».</span><span class="stub">Цены — заглушка</span></div>
-    </div>
-    <a class="btn more" href="#calc">Посчитать сумму →</a>
-  </section>
-</div>
-
-<!-- КАЛЬКУЛЯТОР -->
-<div class="page" data-page="calc" hidden>
-  <div class="crumbs"><a href="#home">Главная</a> / Калькулятор</div>
-  <section style="padding-top:20px">
-    <div class="sec-head"><div><h2>Сколько я получу?</h2><p class="sub">Выберите металл и укажите вес. Расчёт по текущему прайсу, без учёта засора.</p></div></div>
-    <div class="calc">
-      <div class="box"><div class="lines" id="lines"></div><button class="btn more" id="add" type="button">+ Добавить металл</button></div>
-      <div class="box total">
-        <div><div class="eyebrow">Примерно получите</div><div class="sum" id="sum">0 ₽</div></div>
-        <ul id="break"></ul>
-        <p class="sub" style="font-size:13px;margin:0">Точную сумму назовёт приёмщик после взвешивания. Если металл грязный или с пластиком, цену снижают на засор.</p>
+  <section>
+    <div class="wrap">
+      <div class="shead">
+        <div><div class="eyebrow">Что принимаем</div><h2 style="margin-top:10px">Основные категории</h2></div>
+        <a class="link" href="#prices">Весь прайс <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+      <div class="cats">
+        <a class="cat" href="#prices-color"><img src="img/copper.jpg" alt=""><div><h3>Цветные металлы</h3><p>Медь, латунь, алюминий, нержавейка</p></div><span class="go"><svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+        <a class="cat" href="#prices-black"><img src="img/bolts.jpg" alt=""><div><h3>Чёрный металл</h3><p>Лом, чугун, трубы, арматура</p></div><span class="go"><svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+        <a class="cat" href="#prices-other"><img src="img/motors.jpg" alt=""><div><h3>Двигатели и АКБ</h3><p>Электродвигатели, аккумуляторы</p></div><span class="go"><svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
       </div>
     </div>
   </section>
+
+  <div class="stats">
+    <div class="wrap">
+      <div class="stat"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 32h24M20 8v24M10 14h20M10 14l-5 10h10zM30 14l-5 10h10z"/></svg><div><b>±0,1 кг</b><span>точность весов</span></div></div>
+      <div class="stat"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><circle cx="20" cy="20" r="14"/><path d="M20 12v8l6 4"/></svg><div><b>15 минут</b><span>средний приём</span></div></div>
+      <div class="stat"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h20v16H4zM24 18h7l5 5v5H24z"/><circle cx="11" cy="30" r="3"/><circle cx="30" cy="30" r="3"/></svg><div><b>от 300 кг</b><span>бесплатный вывоз</span></div></div>
+      <div class="stat"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="30" height="20" rx="2"/><path d="M5 17h30M10 25h6"/></svg><div><b>Сразу</b><span>наличными или на карту</span></div></div>
+    </div>
+  </div>
+
+  <section class="mist">
+    <div class="wrap">
+      <div class="shead">
+        <div><div class="eyebrow">Цены за 1 кг</div><h2 style="margin-top:10px">Популярные металлы</h2></div>
+        <span class="upd"><i></i>Обновлено: <span class="updtime">сегодня</span></span>
+      </div>
+      <div class="tablebox"><div class="tscroll"><table class="prices">
+        <thead><tr><th>Металл</th><th class="num c-price">Цена</th><th class="num c-chg">Неделя</th></tr></thead>
+        <tbody id="top"></tbody>
+      </table></div></div>
+      <div class="after"><a class="btn btn-line" href="#prices">Весь прайс</a></div>
+    </div>
+  </section>
+
+  <div class="split">
+    <div class="split-text">
+      <div class="eyebrow">Как сдать металл</div>
+      <h2 style="margin-top:14px">Четыре шага. 15 минут. Деньги сразу.</h2>
+      <div class="rule"></div>
+      <p>Приезжайте с металлом и паспортом. Записываться заранее не нужно.</p>
+    </div>
+    <div class="split-dark">
+      <div class="steps">
+        <div class="step"><div class="n">01</div><h3>Сверьте цены</h3><p>Прайс на сайте обновляется каждый день.</p></div>
+        <div class="step"><div class="n">02</div><h3>Рассортируйте</h3><p>Медь отдельно, алюминий отдельно. Так дороже.</p></div>
+        <div class="step"><div class="n">03</div><h3>Взвешивание</h3><p>Взвешиваем при вас на поверенных весах.</p></div>
+        <div class="step"><div class="n">04</div><h3>Оплата</h3><p>Наличными или на карту, сразу на месте.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta">
+    <div class="wrap">
+      <h2>Не знаете, какой у вас металл?</h2>
+      <p>В справочнике простые способы отличить медь от латуни и алюминий от нержавейки.</p>
+      <a class="btn btn-accent" href="#guide">Открыть справочник <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </div>
+  </div>
 </div>
 
-<!-- КАК ОПРЕДЕЛИТЬ -->
+<!-- ============ ЦЕНЫ ============ -->
+<div class="page" data-page="prices" hidden>
+  <div class="phead"><div class="wrap">
+    <div class="crumbs"><a href="#home">Главная</a> / Цены</div>
+    <h1>Цены на металлолом</h1>
+    <p>Цена за 1 кг чистого металла. Если есть пластик, краска или грязь, приёмщик делает скидку на засор.</p>
+  </div></div>
+  <section><div class="wrap">
+    <div class="shead" style="margin-bottom:16px">
+      <div class="filters" role="group" aria-label="Категория металла" style="margin:0">
+        <button class="filter" type="button" data-f="all" aria-pressed="true">Все</button>
+        <button class="filter" type="button" data-f="color" aria-pressed="false">Цветные</button>
+        <button class="filter" type="button" data-f="black" aria-pressed="false">Чёрные</button>
+        <button class="filter" type="button" data-f="other" aria-pressed="false">Двигатели и АКБ</button>
+      </div>
+      <span class="upd"><i></i>Обновлено: <span class="updtime">сегодня</span></span>
+    </div>
+    <div class="tablebox">
+      <div class="tscroll"><table class="prices">
+        <thead><tr><th>Металл</th><th class="desc">Описание</th><th class="num c-price">Цена</th><th class="num c-chg">Неделя</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table></div>
+      <div class="tfoot"><span>Цены в рублях за 1 кг.</span><span class="stub">цены — заглушка</span></div>
+    </div>
+    <div class="after"><a class="btn btn-accent" href="#calc">Посчитать сумму</a><a class="btn btn-line" href="#guide">Как определить металл</a></div>
+  </div></section>
+</div>
+
+<!-- ============ КАЛЬКУЛЯТОР ============ -->
+<div class="page" data-page="calc" hidden>
+  <div class="phead"><div class="wrap">
+    <div class="crumbs"><a href="#home">Главная</a> / Калькулятор</div>
+    <h1>Сколько я получу?</h1>
+    <p>Выберите металл и укажите вес. Можно добавить несколько металлов.</p>
+  </div></div>
+  <section><div class="wrap">
+    <div class="calc">
+      <div class="box">
+        <div class="lines" id="lines"></div>
+        <div class="after"><button class="btn btn-line" id="add" type="button">+ Добавить металл</button></div>
+      </div>
+      <div class="box total">
+        <div class="eyebrow on-ink">Примерно получите</div>
+        <div class="sum" id="sum" aria-live="polite">0 ₽</div>
+        <ul id="break"></ul>
+        <p>Точную сумму назовёт приёмщик после взвешивания. Грязный металл или металл с пластиком принимают со скидкой на засор.</p>
+      </div>
+    </div>
+  </div></section>
+</div>
+
+<!-- ============ СПРАВОЧНИК ============ -->
 <div class="page" data-page="guide" hidden>
-  <div class="crumbs"><a href="#home">Главная</a> / Как определить металл</div>
-  <section style="padding-top:20px">
-    <div class="sec-head"><div><h2>Как определить металл</h2><p class="sub">Самая простая проверка — магнит. Если магнит липнет, это чёрный металл, он стоит дешевле всего.</p></div></div>
-    <div class="price"><div class="tbl-scroll"><table class="test">
-      <thead><tr><th>Металл</th><th>Магнит</th><th>Цвет и вид</th><th>Где встречается</th></tr></thead>
+  <div class="phead"><div class="wrap">
+    <div class="crumbs"><a href="#home">Главная</a> / Справочник</div>
+    <h1>Как определить металл</h1>
+    <p>Самая простая проверка — магнит. Если магнит прилипает, это чёрный металл. Он стоит дешевле всего.</p>
+  </div></div>
+  <section><div class="wrap">
+    <div class="tablebox"><div class="tscroll"><table class="idtable">
+      <thead><tr><th>Металл</th><th>Магнит</th><th>Как выглядит</th><th>Где встречается</th></tr></thead>
       <tbody>
-        <tr><td>Медь</td><td>Не липнет</td><td>Красно-рыжая, на срезе розовая</td><td>Провода, обмотки двигателей, трубки кондиционеров</td></tr>
-        <tr><td>Латунь</td><td>Не липнет</td><td>Жёлтая, «под золото», тяжёлая</td><td>Краны, смесители, фитинги, гильзы</td></tr>
-        <tr><td>Алюминий</td><td>Не липнет</td><td>Серебристо-серый, очень лёгкий</td><td>Профиль, банки, радиаторы, посуда</td></tr>
-        <tr><td>Нержавейка</td><td>Не липнет или слабо</td><td>Серебристая, не ржавеет, тяжелее алюминия</td><td>Мойки, баки стиральных машин, посуда</td></tr>
-        <tr><td>Свинец</td><td>Не липнет</td><td>Тёмно-серый, мягкий, царапается ногтем</td><td>Кабельная оплётка, грузики, аккумуляторы</td></tr>
-        <tr><td>Чёрный металл</td><td>Липнет</td><td>Серый, часто ржавый</td><td>Трубы, арматура, кузова, батареи</td></tr>
-      </tbody></table></div></div>
-  </section>
-  <section>
-    <div class="sec-head"><div><h2>Как получить больше денег</h2><p class="sub">Чистый и рассортированный металл принимают по полной цене.</p></div></div>
-    <div class="grid2">
-      <div class="box tip"><h3>Рассортируйте по видам</h3><p>Медь отдельно, латунь отдельно, алюминий отдельно. Если всё смешано, считают по самому дешёвому.</p></div>
-      <div class="box tip"><h3>Снимите изоляцию с кабеля</h3><p>Чистая медь стоит в 3 раза дороже кабеля в изоляции.</p></div>
-      <div class="box tip"><h3>Уберите пластик и резину</h3><p>Отделите ручки, прокладки, пластиковые корпуса.</p></div>
-      <div class="box tip"><h3>Слейте жидкости</h3><p>Масло, бензин, воду из радиаторов и баков. Мокрый металл весит больше, и за это снимают засор.</p></div>
+        <tr><td>Медь</td><td data-l="Магнит"><span class="mag m-no">Не липнет</span></td><td data-l="Вид">Красно-рыжая, на срезе розовая</td><td data-l="Где">Провода, обмотки двигателей, трубки кондиционеров</td></tr>
+        <tr><td>Латунь</td><td data-l="Магнит"><span class="mag m-no">Не липнет</span></td><td data-l="Вид">Жёлтая, «под золото», тяжёлая</td><td data-l="Где">Краны, смесители, фитинги, гильзы</td></tr>
+        <tr><td>Алюминий</td><td data-l="Магнит"><span class="mag m-no">Не липнет</span></td><td data-l="Вид">Серебристо-серый, очень лёгкий</td><td data-l="Где">Профиль, банки, радиаторы, посуда</td></tr>
+        <tr><td>Нержавейка</td><td data-l="Магнит"><span class="mag m-weak">Слабо или нет</span></td><td data-l="Вид">Серебристая, не ржавеет, тяжелее алюминия</td><td data-l="Где">Мойки, баки стиральных машин, посуда</td></tr>
+        <tr><td>Свинец</td><td data-l="Магнит"><span class="mag m-no">Не липнет</span></td><td data-l="Вид">Тёмно-серый, мягкий, царапается ногтем</td><td data-l="Где">Оплётка кабеля, грузики, аккумуляторы</td></tr>
+        <tr><td>Чёрный металл</td><td data-l="Магнит"><span class="mag m-yes">Липнет</span></td><td data-l="Вид">Серый, часто ржавый</td><td data-l="Где">Трубы, арматура, кузова, батареи</td></tr>
+      </tbody>
+    </table></div></div>
+  </div></section>
+  <section><div class="wrap">
+    <h2 style="margin-bottom:24px">Как получить больше денег</h2>
+    <div class="tips">
+      <div class="tip"><h3>Рассортируйте по видам</h3><p>Медь отдельно, латунь отдельно, алюминий отдельно. Смешанный металл считают по самой низкой цене.</p></div>
+      <div class="tip"><h3>Снимите изоляцию с кабеля</h3><p>Чистая медь стоит примерно в три раза дороже кабеля в изоляции.</p></div>
+      <div class="tip"><h3>Уберите пластик и резину</h3><p>Отделите ручки, прокладки, пластиковые корпуса.</p></div>
+      <div class="tip"><h3>Слейте жидкости</h3><p>Масло, бензин, воду из радиаторов и баков. За жидкость снимают засор.</p></div>
     </div>
-    <div class="ba" style="margin-top:14px">
-      <div class="bad"><b>Так дешевле</b>Мешок, где медь, латунь и алюминий вперемешку с пластиком</div>
-      <div class="good"><b>Так дороже</b>Три отдельных мешка: медь, латунь, алюминий — без пластика</div>
+    <div class="compare">
+      <div class="bad"><b>Так дешевле</b>Один мешок: медь, латунь и алюминий вперемешку с пластиком.</div>
+      <div class="good"><b>Так дороже</b>Три мешка: отдельно медь, латунь и алюминий, без пластика.</div>
     </div>
-  </section>
+  </div></section>
 </div>
 
-<!-- ПРАВИЛА -->
+<!-- ============ ПРАВИЛА ============ -->
 <div class="page" data-page="rules" hidden>
-  <div class="crumbs"><a href="#home">Главная</a> / Правила приёма</div>
-  <section style="padding-top:20px">
-    <div class="sec-head"><div><h2>Что мы не принимаем</h2><p class="sub">Это запрещено законом или опасно. Не везите это, чтобы не ездить зря.</p></div></div>
-    <div class="no">
-      <div><b>Баллоны под давлением</b><span>Газовые, кислородные, огнетушители без вскрытия</span></div>
-      <div><b>Закрытые ёмкости</b><span>Бочки и канистры, которые нельзя открыть и проверить</span></div>
-      <div><b>Взрывоопасное</b><span>Боеприпасы, снаряды, всё военное</span></div>
-      <div><b>Радиоактивное</b><span>Проверяем дозиметром каждую партию</span></div>
-      <div><b>Городское имущество</b><span>Люки, ограждения, дорожные знаки, детали ЛЭП</span></div>
-      <div><b>Ритуальные изделия</b><span>Ограды, кресты, памятные таблички</span></div>
+  <div class="phead"><div class="wrap">
+    <div class="crumbs"><a href="#home">Главная</a> / Правила приёма</div>
+    <h1>Правила приёма</h1>
+    <p>Что мы не принимаем, что взять с собой и ответы на частые вопросы.</p>
+  </div></div>
+  <section><div class="wrap">
+    <h2 style="margin-bottom:24px">Не принимаем</h2>
+    <div class="nolist">
+      <div class="no"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></svg><div><b>Баллоны под давлением</b><span>Газовые, кислородные, огнетушители без вскрытия</span></div></div>
+      <div class="no"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></svg><div><b>Закрытые ёмкости</b><span>Бочки и канистры, которые нельзя открыть и проверить</span></div></div>
+      <div class="no"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></svg><div><b>Взрывоопасное</b><span>Боеприпасы, снаряды, всё военное</span></div></div>
+      <div class="no"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></svg><div><b>Радиоактивное</b><span>Каждую партию проверяем дозиметром</span></div></div>
+      <div class="no"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></svg><div><b>Городское имущество</b><span>Люки, ограждения, дорожные знаки, детали ЛЭП</span></div></div>
+      <div class="no"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></svg><div><b>Ритуальные изделия</b><span>Ограды, кресты, памятные таблички</span></div></div>
     </div>
-  </section>
-  <section>
-    <div class="sec-head"><div><h2>Что взять с собой</h2></div></div>
-    <div class="grid2">
-      <div class="box tip"><h3>Паспорт</h3><p>Обязателен по закону для частных лиц. Без него принять металл не можем.</p></div>
-      <div class="box tip"><h3>Для организаций</h3><p>Договор, реквизиты, доверенность на водителя. <span class="stub">заглушка</span></p></div>
+  </div></section>
+  <section><div class="wrap">
+    <h2 style="margin-bottom:24px">Что взять с собой</h2>
+    <div class="tips">
+      <div class="tip"><h3>Паспорт</h3><p>Обязателен по закону для частных лиц. Без паспорта принять металл не можем.</p></div>
+      <div class="tip"><h3>Для организаций</h3><p>Договор, реквизиты и доверенность на водителя. <span class="stub">заглушка</span></p></div>
     </div>
-  </section>
-  <section>
-    <div class="sec-head"><div><h2>Частые вопросы</h2></div></div>
-    <details><summary>Почему цена на сайте может отличаться от итоговой?</summary><p>Цена указана за чистый металл. Если есть пластик, краска, масло или земля, приёмщик делает скидку на засор. Это всегда обсуждается при вас.</p></details>
-    <details><summary>Что такое засор?</summary><p>Это вес всего лишнего: пластика, резины, грязи, воды. Его вычитают из общего веса, обычно в процентах.</p></details>
-    <details><summary>Принимаете ли аккумуляторы и электронику?</summary><p>Аккумуляторы принимаем, цена в прайсе. Электронику и платы — по отдельной договорённости.</p></details>
-    <details><summary>Как часто обновляются цены?</summary><p>Цены меняются вслед за биржей, обычно несколько раз в неделю. Дата обновления указана над прайсом.</p></details>
-  </section>
+  </div></section>
+  <section><div class="wrap">
+    <h2 style="margin-bottom:16px">Частые вопросы</h2>
+    <div class="faq">
+      <details><summary>Почему итоговая цена может отличаться от сайта?</summary><p>На сайте цена за чистый металл. Если есть пластик, краска, масло или земля, приёмщик делает скидку на засор. Это всегда обсуждается при вас.</p></details>
+      <details><summary>Что такое засор?</summary><p>Это вес всего лишнего: пластика, резины, грязи, воды. Его вычитают из общего веса, обычно в процентах.</p></details>
+      <details><summary>Принимаете аккумуляторы и электронику?</summary><p>Аккумуляторы принимаем, цена есть в прайсе. Электронику и платы — по отдельной договорённости.</p></details>
+      <details><summary>Как часто меняются цены?</summary><p>Цены меняются вслед за биржей, обычно несколько раз в неделю. Дата обновления указана над прайсом.</p></details>
+    </div>
+  </div></section>
 </div>
 
-<!-- УСЛУГИ -->
+<!-- ============ УСЛУГИ ============ -->
 <div class="page" data-page="services" hidden>
-  <div class="crumbs"><a href="#home">Главная</a> / Услуги</div>
-  <section style="padding-top:20px">
-    <div class="sec-head"><div><h2>Услуги</h2></div></div>
-    <div class="cards">
-      <div class="card"><img src="img/pile.jpg" alt="Куча смешанного металлолома"><div><h3>Вывоз металлолома</h3><p>Свой транспорт с манипулятором. Приедем в день заявки.</p><span class="pr">Бесплатно от 300 кг</span></div></div>
+  <div class="phead"><div class="wrap">
+    <div class="crumbs"><a href="#home">Главная</a> / Услуги</div>
+    <h1>Услуги</h1>
+    <p>Кроме приёма на площадке, приедем сами и поможем с разборкой.</p>
+  </div></div>
+  <section><div class="wrap">
+    <div class="svc">
+      <div class="card"><img src="img/pile.jpg" alt="Куча металлолома"><div><h3>Вывоз металлолома</h3><p>Свой транспорт с манипулятором. Приедем в день заявки.</p><span class="pr">Бесплатно от 300 кг</span></div></div>
       <div class="card"><img src="img/motors.jpg" alt="Старые электродвигатели"><div><h3>Демонтаж и резка</h3><p>Разберём гаражи, ёмкости, металлоконструкции, станки.</p><span class="pr">от 2 000 ₽ <span class="stub">заглушка</span></span></div></div>
       <div class="card"><img src="img/copper.jpg" alt="Медная проволока"><div><h3>Приём от организаций</h3><p>Договор, акты, безналичная оплата, справки об утилизации.</p><span class="pr">Цена договорная</span></div></div>
     </div>
-  </section>
+  </div></section>
 </div>
 
-<!-- О КОМПАНИИ -->
+<!-- ============ О КОМПАНИИ ============ -->
 <div class="page" data-page="about" hidden>
-  <div class="crumbs"><a href="#home">Главная</a> / О компании</div>
-  <section style="padding-top:20px">
+  <div class="phead"><div class="wrap">
+    <div class="crumbs"><a href="#home">Главная</a> / О компании</div>
+    <h1>О компании «Шаблон»</h1>
+  </div></div>
+  <section><div class="wrap">
     <div class="about">
       <div>
-        <h2>О компании «Шаблон»</h2>
-        <p>Работаем с 2014 года. Принимаем металл у частных лиц и организаций, сортируем на своей площадке и отправляем на переработку. Взвешиваем при клиенте на поверенных весах.</p>
-        <p>Здесь будет реальный текст о компании: история, сколько площадок, кто работает. <span class="stub">заглушка</span></p>
-        <ul><li>Весы проходят поверку каждый год</li><li>Расчёт сразу после взвешивания</li><li>Лицензия № 00-000000 <span class="stub">заглушка</span></li></ul>
+        <p>Работаем с 2014 года. Принимаем металл у частных лиц и организаций, сортируем на своей площадке и отправляем на переработку.</p>
+        <p>Здесь будет настоящий текст о компании: история, сколько площадок, кто работает. <span class="stub">заглушка</span></p>
+        <ul class="checks">
+          <li>Весы проходят поверку каждый год</li>
+          <li>Взвешиваем при клиенте</li>
+          <li>Расчёт сразу после взвешивания</li>
+          <li>Лицензия № 00-000000 <span class="stub">заглушка</span></li>
+        </ul>
       </div>
-      <div class="ph"><img src="img/bolts.jpg" alt="Болты и гайки"><img src="img/gear.jpg" alt="Стальная шестерня крупным планом"></div>
+      <div class="aph"><img src="img/bolts.jpg" alt="Болты и гайки"><img src="img/gear.jpg" alt="Стальная шестерня"></div>
     </div>
-  </section>
-  <section>
-    <div class="sec-head"><div><h2>Наша площадка</h2><p class="sub">Сюда встанут настоящие фото пункта приёма.</p></div></div>
-    <div class="photos"><div>Фото въезда</div><div>Фото весов</div><div>Фото площадки</div></div>
-  </section>
+  </div></section>
+  <section><div class="wrap">
+    <h2 style="margin-bottom:8px">Наша площадка</h2>
+    <p class="lead" style="margin-bottom:24px">Сюда встанут настоящие фото пункта приёма.</p>
+    <div class="slots"><div>Фото въезда</div><div>Фото весов</div><div>Фото площадки</div></div>
+  </div></section>
 </div>
 
-<!-- КОНТАКТЫ -->
+<!-- ============ КОНТАКТЫ ============ -->
 <div class="page" data-page="contacts" hidden>
-  <div class="crumbs"><a href="#home">Главная</a> / Контакты</div>
-  <section style="padding-top:20px">
-    <div class="sec-head"><div><h2>Контакты</h2><p class="sub">Все данные ниже — заглушки.</p></div></div>
+  <div class="phead"><div class="wrap">
+    <div class="crumbs"><a href="#home">Главная</a> / Контакты</div>
+    <h1>Контакты</h1>
+    <p>Все данные ниже — заглушки.</p>
+  </div></div>
+  <section><div class="wrap">
     <div class="contact">
       <div class="box">
-        <div class="row"><span>Адрес</span><span>г. Шаблонск, ул. Шаблонная, 1</span></div>
-        <div class="row"><span>Телефон</span><span style="font-family:var(--mono)">+7 (000) 000-00-00</span></div>
-        <div class="row"><span>WhatsApp / Telegram</span><span>@shablon_metall</span></div>
-        <div class="row"><span>Часы работы</span><span>Пн–Сб 8:00–19:00, Вс — выходной</span></div>
-        <form id="f">
-          <label for="n">Имя<input id="n" required placeholder="Иван"></label>
-          <label for="ph">Телефон<input id="ph" required placeholder="+7 ___ ___-__-__"></label>
-          <label for="w">Что вывезти<select id="w"><option>Чёрный лом</option><option>Цветной металл</option><option>Смешанный</option></select></label>
-          <button class="btn primary" type="submit">Заказать вывоз</button>
-          <span class="ok" id="ok" hidden>В демо-версии заявка никуда не отправляется. На живом сайте она придёт владельцу.</span>
+        <div class="crow"><span>Адрес</span><b>г. Шаблонск, ул. Шаблонная, 1</b></div>
+        <div class="crow"><span>Телефон</span><b>+7 (000) 000-00-00</b></div>
+        <div class="crow"><span>Мессенджеры</span><b>@shablon_metall</b></div>
+        <div class="crow"><span>Часы работы</span><b>Пн–Сб 8:00–19:00<br>Вс — выходной</b></div>
+        <form id="form" novalidate>
+          <h3>Заявка на вывоз</h3>
+          <label for="fn">Имя<input id="fn" autocomplete="name" placeholder="Иван"></label>
+          <label for="fp">Телефон<input id="fp" type="tel" autocomplete="tel" placeholder="+7 (___) ___-__-__"></label>
+          <label for="fw">Что вывезти<select id="fw"><option>Чёрный лом</option><option>Цветной металл</option><option>Смешанный</option></select></label>
+          <button class="btn btn-accent" type="submit">Отправить заявку</button>
+          <span class="ok" id="ok" hidden>Это демо: заявка никуда не отправилась. На готовом сайте она придёт владельцу.</span>
         </form>
       </div>
       <div class="map">Здесь будет карта<br>(Яндекс или Google)</div>
     </div>
-  </section>
+  </div></section>
 </div>
 
-  <div class="enter"><h3>Сдать металл выгодно</h3><a class="btn" href="#prices">Смотреть цены</a></div>
-  <footer><span>© 2026 «Шаблон». Приём металлолома.</span><span>Шаблон сайта для демонстрации</span></footer>
 </main>
 
+<footer>
+  <div class="wrap fgrid">
+    <div><a class="logo" href="#home"><b>ШАБЛОН</b><span>приём металлолома</span></a></div>
+    <nav class="fnav" aria-label="Разделы в подвале"><a href="#prices">Цены</a><a href="#calc">Калькулятор</a><a href="#guide">Справочник</a><a href="#rules">Правила приёма</a><a href="#services">Услуги</a><a href="#about">О компании</a><a href="#contacts">Контакты</a></nav>
+    <div class="fcontact"><b>+7 (000) 000-00-00</b><span>г. Шаблонск, ул. Шаблонная, 1</span><span>Пн–Сб 8:00–19:00</span></div>
+  </div>
+  <div class="wrap fbottom"><span>© 2026 «Шаблон»</span><span>Шаблон сайта для демонстрации</span></div>
+</footer>
+
 <script>
+// Цены-заглушки. На готовом сайте будут браться из Google Таблицы владельца.
+// [категория, название, описание, цвет, цена ₽/кг, изменение за неделю]
 const P=[
- ["color","Медь блестящая","Провод без изоляции, чистая","#d08a5c",742,+12],
- ["color","Медь микс","С пайкой, окислами","#b0704a",688,+8],
- ["color","Кабель медный","В изоляции, по выходу меди","#8f5a3c",215,0],
- ["color","Латунь","Краны, фитинги, гильзы","#c9a54c",455,-6],
- ["color","Алюминий профиль","Чистый, без пластика","#c4c8cf",142,+3],
- ["color","Алюминий банка","Пивные банки, прессованные","#a9adb5",98,0],
- ["color","Нержавейка","Ni 8–10%, без магнита","#9aa0a8",88,-2],
- ["color","Свинец","Кабельный, грузики","#6f747c",112,+1],
- ["color","Цинк","Чушки, детали","#8a8f96",146,0],
- ["black","Чёрный лом 3А","Толщина от 6 мм","#5a4a40",19.5,+0.5],
- ["black","Чёрный лом 5А","Негабарит, тонкостенка","#4c3f37",18,0],
- ["black","Чугун","Батареи, ванны, станины","#3d3a38",17.5,-0.5],
- ["black","Стружка стальная","Без масла и эмульсии","#46413d",9,0],
- ["other","Аккумуляторы АКБ","Автомобильные, с электролитом","#4b6b5a",62,+2],
- ["other","Электродвигатели","По весу, в сборе","#5d6b4b",58,0],
+ ["color","Медь блестящая","Провод без изоляции, чистая","#c8784a",742,12],
+ ["color","Медь микс","С пайкой, окислами","#a9673f",688,8],
+ ["color","Кабель медный","В изоляции, по выходу меди","#8a5536",215,0],
+ ["color","Латунь","Краны, фитинги, гильзы","#c9a23e",455,-6],
+ ["color","Алюминий профиль","Чистый, без пластика","#b9bec6",142,3],
+ ["color","Алюминий банка","Банки, прессованные","#9ea4ad",98,0],
+ ["color","Нержавейка","Без магнита, никель 8–10%","#8c929b",88,-2],
+ ["color","Свинец","Кабельный, грузики","#5f646c",112,1],
+ ["color","Цинк","Чушки, детали","#7c828a",146,0],
+ ["black","Чёрный лом 3А","Толщина от 6 мм","#6b5547",19.5,0.5],
+ ["black","Чёрный лом 5А","Тонкостенный, негабарит","#5b493d",18,0],
+ ["black","Чугун","Батареи, ванны, станины","#45403c",17.5,-0.5],
+ ["black","Стружка стальная","Без масла и эмульсии","#514a44",9,0],
+ ["other","Аккумуляторы","Автомобильные, с электролитом","#3f6b55",62,2],
+ ["other","Электродвигатели","По весу, в сборе","#56683f",58,0]
 ];
-const fmt=n=>n.toLocaleString("ru-RU",{minimumFractionDigits:n%1?1:0,maximumFractionDigits:1});
-const ch=v=>{const c=v>0?"u":v<0?"d":"z";return `<span class="ch ${c}">${v>0?"▲ +"+fmt(v):v<0?"▼ "+fmt(v):"—"}</span>`};
-const mat=r=>`<div class="mat"><i class="sw" style="background:${r[3]}"></i><div>${r[1]}</div></div>`;
-function draw(f){document.getElementById("rows").innerHTML=P.filter(r=>f==="all"||r[0]===f).map(r=>`<tr><td>${mat(r)}</td><td class="desc" style="color:var(--muted)">${r[2]}</td><td class="p">${fmt(r[4])} <small>₽</small></td><td class="p">${ch(r[5])}</td></tr>`).join("");}
-draw("all");
-document.getElementById("top").innerHTML=[0,3,4,6,9].map(i=>P[i]).map(r=>`<tr><td>${mat(r)}</td><td class="p">${fmt(r[4])} <small>₽</small></td><td class="p">${ch(r[5])}</td></tr>`).join("");
-document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-pressed",x===b));draw(b.dataset.f);});
-const t=new Date().toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"});
-document.querySelectorAll(".upd").forEach(e=>e.textContent="сегодня, "+t);
-document.getElementById("f").addEventListener("submit",e=>{e.preventDefault();document.getElementById("ok").hidden=false;});
+const fmt=n=>n.toLocaleString("ru-RU",{maximumFractionDigits:1});
+const rub=n=>Math.round(n).toLocaleString("ru-RU")+" ₽";
+const chg=v=>v>0?`<span class="chg u">▲ ${fmt(v)}</span>`:v<0?`<span class="chg d">▼ ${fmt(-v)}</span>`:`<span class="chg z">—</span>`;
+const mat=r=>`<div class="mat"><i class="sw" style="background:${r[3]}"></i><span>${r[1]}</span></div>`;
+const price=r=>`<td class="num price">${fmt(r[4])} <small>₽</small></td>`;
+
+function drawPrices(f){
+  document.getElementById("rows").innerHTML=P.filter(r=>f==="all"||r[0]===f)
+    .map(r=>`<tr><td>${mat(r)}</td><td class="desc">${r[2]}</td>${price(r)}<td class="num">${chg(r[5])}</td></tr>`).join("");
+  document.querySelectorAll(".filter").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.f===f)));
+}
+document.getElementById("top").innerHTML=[0,3,4,6,9].map(i=>P[i])
+  .map(r=>`<tr><td>${mat(r)}</td>${price(r)}<td class="num">${chg(r[5])}</td></tr>`).join("");
+document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>drawPrices(b.dataset.f)));
+drawPrices("all");
+
+const now=new Date().toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"});
+document.querySelectorAll(".updtime").forEach(e=>e.textContent="сегодня, "+now);
+
+const options=sel=>P.map((r,i)=>`<option value="${i}"${i===sel?" selected":""}>${r[1]} — ${fmt(r[4])} ₽/кг</option>`).join("");
+const num=v=>{const n=parseFloat(String(v).replace(",","."));return isFinite(n)&&n>0?n:0;};
+
+// Быстрый расчёт на главной
+const qm=document.getElementById("qm"),qk=document.getElementById("qk");
+qm.innerHTML=options(0);
+function quick(){document.getElementById("qsum").textContent=rub(P[qm.value][4]*num(qk.value));}
+qm.addEventListener("change",quick);qk.addEventListener("input",quick);quick();
 
 // Калькулятор
 const lines=document.getElementById("lines");let lid=0;
-function addLine(m=0,kg=""){
+function addLine(sel,kg){
   const id=++lid,d=document.createElement("div");d.className="line";
-  d.innerHTML=`<label for="m${id}">Металл<select id="m${id}">${P.map((r,i)=>`<option value="${i}"${i==m?" selected":""}>${r[1]} — ${fmt(r[4])} ₽/кг</option>`).join("")}</select></label><label for="k${id}">Вес, кг<input id="k${id}" type="number" min="0" step="0.1" inputmode="decimal" value="${kg}" placeholder="0"></label><button type="button" aria-label="Убрать строку">×</button>`;
-  d.querySelector("button").onclick=()=>{d.remove();calc();};
-  d.addEventListener("input",calc);lines.appendChild(d);calc();
+  d.innerHTML=`<label for="m${id}">Металл<select id="m${id}">${options(sel)}</select></label>`+
+    `<label for="k${id}">Вес, кг<input id="k${id}" type="number" inputmode="decimal" min="0" step="0.1" value="${kg}" placeholder="0"></label>`+
+    `<button class="del" type="button" aria-label="Убрать металл">×</button>`;
+  d.querySelector(".del").addEventListener("click",()=>{d.remove();if(!lines.children.length)addLine(9,"");calc();});
+  d.addEventListener("input",calc);d.addEventListener("change",calc);
+  lines.appendChild(d);calc();
 }
 function calc(){
-  let s=0,b=[];lines.querySelectorAll(".line").forEach(l=>{const r=P[l.querySelector("select").value],k=parseFloat(l.querySelector("input").value)||0;if(k>0){const v=r[4]*k;s+=v;b.push(`<li><span>${r[1]}, ${fmt(k)} кг</span><span>${Math.round(v).toLocaleString("ru-RU")} ₽</span></li>`);}});
-  document.getElementById("sum").textContent=Math.round(s).toLocaleString("ru-RU")+" ₽";
-  document.getElementById("break").innerHTML=b.join("")||"<li><span>Добавьте металл и вес</span></li>";
+  let s=0;const b=[];
+  lines.querySelectorAll(".line").forEach(l=>{
+    const r=P[l.querySelector("select").value],k=num(l.querySelector("input").value);
+    if(k>0){s+=r[4]*k;b.push(`<li><span>${r[1]}, ${fmt(k)} кг</span><span>${rub(r[4]*k)}</span></li>`);}
+  });
+  document.getElementById("sum").textContent=rub(s);
+  document.getElementById("break").innerHTML=b.join("")||"<li><span>Укажите вес металла</span></li>";
 }
-document.getElementById("add").onclick=()=>addLine(9);
+document.getElementById("add").addEventListener("click",()=>addLine(9,""));
 addLine(0,12);addLine(4,30);
+
+// Форма (демо)
+document.getElementById("form").addEventListener("submit",e=>{e.preventDefault();document.getElementById("ok").hidden=false;});
+
+// Меню на телефоне
+const burger=document.getElementById("burger"),mmenu=document.getElementById("mmenu"),bicon=document.getElementById("bicon");
+function setMenu(open){mmenu.hidden=!open;burger.setAttribute("aria-expanded",String(open));
+  burger.setAttribute("aria-label",open?"Закрыть меню":"Открыть меню");
+  bicon.setAttribute("d",open?"M5 5l14 14M19 5L5 19":"M3 6h18M3 12h18M3 18h18");}
+burger.addEventListener("click",()=>setMenu(mmenu.hidden));
 
 // Страницы
 const pages=[...document.querySelectorAll(".page")].map(p=>p.dataset.page);
 function route(){
-  const h=location.hash.slice(1),cur=pages.includes(h)?h:"home";
+  let h=location.hash.slice(1),filter=null;
+  if(h.startsWith("prices-")){filter=h.slice(7);h="prices";}
+  const cur=pages.includes(h)?h:"home";
   document.querySelectorAll(".page").forEach(p=>p.hidden=p.dataset.page!==cur);
-  document.querySelectorAll("#nav a,#mnav a").forEach(a=>a.getAttribute("href")==="#"+cur?a.setAttribute("aria-current","page"):a.removeAttribute("aria-current"));
+  document.querySelectorAll("#nav a,#mmenu a").forEach(a=>{
+    if(a.getAttribute("href")==="#"+cur)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");});
+  if(cur==="prices")drawPrices(["color","black","other"].includes(filter)?filter:"all");
+  setMenu(false);
   window.scrollTo(0,0);
-  document.getElementById("mnav").hidden=true;const bg=document.getElementById("burger");bg.setAttribute("aria-expanded","false");bg.textContent="☰";
 }
-document.getElementById("burger").onclick=e=>{const m=document.getElementById("mnav"),o=m.hidden;m.hidden=!o;e.currentTarget.setAttribute("aria-expanded",o);e.currentTarget.textContent=o?"✕":"☰";};
 addEventListener("hashchange",route);route();
 </script>
 
